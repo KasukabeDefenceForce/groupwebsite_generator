@@ -76,28 +76,29 @@
                     <a href="sub_research/{{ item.project_id|replace(' ', '_')|lower }}.html" style="color: black;">
                         <h1>{{ item.title }}</h1>
                     </a>
-                    <div class="container py-lg-5 py-md-4 py-2">
-                        <div class="row">
-                            {% for para in item.description %}
-                                <p class="mb-4" style="padding-bottom: 3%; text-align:left; font-size: 18px;">
-                                {{ para }}
-                                </p>
-                            {% endfor %}
-                        </div>
+                </div>
+                <div class="container py-lg-5 py-md-4 py-2">
+                    <div class="row">
+                        {% for para in item.description %}
+                            <p class="mb-4" style="padding-bottom: 3%; text-align:left; font-size: 18px;">
+                            {{ para }}
+                            </p>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="container py-lg-5 py-md-4 py-2">
                     <div class="row">
+                    {% if item.sub-projects %}
                         {% set counter = 0 %}
-                        {% for _, writeup in writeup_list.iterrows() %}
+                        {% for sub_project in item.sub_projects %}
                         {% if counter < 3 %} 
                         <div class="col-lg-4 col-md-6 item">
                             <div class="card">
                                 <div class="card-header p-0 position-relative">
-                                    <a href="sub_research/{{ category|replace(' ', '_')|lower }}/{{ writeup['article_id']|lower }}.html"
+                                    <a href="sub_research/{{ sub_project.project_id|replace(' ', '_')|lower }}/{{ sub_project.project_id|lower }}.html"
                                         class="zoom d-block">
                                         <img style="max-width: 380px; max-height: 230px;" class="card-img-bottom d-block"
-                                            src="{{ writeup.cover_image }}" alt="array">
+                                            src="{{ sub_project.cover_image }}" alt="array">
                                     </a>
                                     <div class="date">
                                          <p>{{ writeup["date"].strftime('%d') }}{% if writeup["date"].day % 10 == 1 and writeup["date"].day != 11 %}st{% elif writeup["date"].day % 10 == 2 and writeup["date"].day != 12 %}nd{% elif writeup["date"].day % 10 == 3 and writeup["date"].day != 13 %}rd{% else %}th{% endif %} {{ writeup["date"].strftime('%b, %Y') }}</p>
@@ -147,11 +148,12 @@
                                 {% endif %}
                             </div>
 
-                            </div>
-                    </div>
-                    {% set counter = counter + 1 %}
+                        </div>
+                        {%endif%}
+                        {% endfor %}
+                        {% set counter = counter + 1 %}
                     {% endif %}
-                    {% endfor %}
+                    </div>
                 </div>
                 <pagination>
                     <div class="pagination-wrapper mt-5 pt-lg-3 text-center">
