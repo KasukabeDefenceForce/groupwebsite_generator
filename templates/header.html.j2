@@ -40,10 +40,10 @@
                                         {{ page }} <span class="fas fa-angle-down"></span>
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        {% for sub_page in general[page] %}
-                                            {% set sub_page_link = "./sub_research/" ~ page_link(sub_page)|lower ~ ".html" %}
+                                        {% for sub_page in research %}
+                                            {% set sub_page_link = "./sub_research/" ~ page_link(sub_page.title)|lower ~ ".html" %}
                                             <a class="dropdown-item" href="{{ relativize_link(sub_page_link) }}">
-                                                {{ sub_page }}
+                                                {{ sub_page.title }}
                                             </a>
                                         {% endfor %}
                                     </div>
