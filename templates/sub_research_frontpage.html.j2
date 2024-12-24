@@ -76,10 +76,17 @@
                     <div class="container py-lg-5 py-md-4 py-2">
                     {#TODO: ASK HOW TO SHOW IMAGES#}
                         <div class="row">
-                        {% for para in data.description %}
+                        {% for content_key, content_value in data.description.items() %}
+                            {%if "para" in content_key%}
                             <p class="mb-4" style="padding-bottom: 3%; text-align:left; font-size: 18px;">
-                            {{ para }}
+                            {{ content_value }}
                             </p>
+                            {% elif "img" in content_key%}
+                            <figure class="single-post-image mb-4" style="max-width:fit-content; width:60%; display: block; margin: auto;">
+                                <img src="{{ content_value.src }}" class="img-fluid img-responsive mt-3" alt="blog-post-image">
+                                <figcaption class="text-center mt-2" style="font-size: 12px;">{{content_value.caption}}</figcaption>
+                            </figure>
+                            {%endif%}
                         {%endfor%}
                         </div>
                     </div>
@@ -87,6 +94,8 @@
                  <div class="container py-lg-5 py-md-4 py-2">
                     <div class="row">
                         {% set counter = 0 %}
+                        {% if data['sub_research'] | length > 0%}
+                        <h2 style="padding-bottom: 30px;">Projects</h2>
                         {% for sub_research_id in data['sub_research'] %}
                             {% if sub_research_id in indexed_research_df.index %}
                                 {% set sub_research = indexed_research_df.loc[sub_research_id]%}
@@ -112,7 +121,13 @@
                                                         <hr style="border-top: 1px dotted rgba(143, 143, 143);">
                                                         <div class="price-review mb-1 align-items-center" style="height: 80px;">
                                                         <p style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                                                            {{ sub_research.description[0] }}
+                                                            {% set found_para_key = false %}
+                                                            {% for content_key, content_value in sub_research.description.items() %}
+                                                                {% if "para" in content_key and not found_para_key %}
+                                                                    {{ content_value }}
+                                                                    {% set found_para_key = true %}
+                                                                {% endif %}
+                                                            {% endfor %}
                                                         </p>
                                                         </div>
                                                 </div>
@@ -142,6 +157,7 @@
                                 {% endif %}
                             {%endif%}
                         {% endfor %}
+                        {%endif%}
                     </div>
                 </div>
             </div>
