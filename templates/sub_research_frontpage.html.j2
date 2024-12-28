@@ -43,6 +43,22 @@
             text-decoration: none;
         }
 
+        .badge {
+            display: inline-block;
+            background-color: #673ab7; /* Background color of the badge */
+            color: white;          /* Text color */
+            padding: 4px 8px;     /* Padding around the text */
+            border-radius: 5px;   /* Rounded corners *
+            text-align: center;    /* Center the text */
+        }
+
+        .badge-tray {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            overflow: auto;
+            overflow-x: auto;
+        }
         .heading:hover {
             background-image: linear-gradient(to left, #673ab7, #673ab7);
             /* Gradient from right to left */
@@ -74,11 +90,10 @@
                     <h1>{{ data.title }}</h1>
                     <br>
                     <div class="container py-lg-5 py-md-4 py-2">
-                    {#TODO: ASK HOW TO SHOW IMAGES#}
                         <div class="row">
                         {% for content_key, content_value in data.description.items() %}
                             {%if "para" in content_key%}
-                            <p class="mb-4" style="padding-bottom: 3%; text-align:left; font-size: 18px;">
+                            <p class="mb-4" style="text-align:left; font-size: 18px;">
                             {{ content_value }}
                             </p>
                             {% elif "img" in content_key%}
@@ -90,8 +105,45 @@
                         {%endfor%}
                         </div>
                     </div>
+                    {#
+                    <div class="col-lg-10 right-side-bar mt-lg-0 mt-5 ps-lg-5" style="padding-top: 5%;">
+                        <div class="row">
+                            {% if data.team%}
+                            <div class="col text-center">
+                                <aside class="posts p-6" style="overflow-x: scroll;">
+                                    <h3 class="aside-title">People Associated</h3>
+                                    <ul class="category">
+                                        <li>
+                                        {% for person_id in data.team %}
+                                        {% if person_id in member_data %}
+
+                                            {% set member_info = member_data[person_id] %}
+
+                                            {% set member_name = member_info.get('full_name') %}
+                                            <a href="../members/{{ person_id }}/{{ person_id }}.html" target="_blank"
+                                                style="font-size: 15px; display: inline;">
+                                                <span class="fas fa-user"></span> {{ member_name.strip().split(" ")[0] }}
+                                            </a>
+                                            
+                                        {% elif person_id.strip().split(' ')[-1].strip().lower().startswith("http://") or person_id.strip().split(' ')[-1].strip().lower().startswith("https://") %}
+                                            <a href="{{ person_id.strip().split(' ')[-1] }}" target="_blank" style="font-size: 15px;  display: inline;">
+                                                <span class="fas fa-external-link-alt"></span>{{ person_id.strip().split(' ')[0] }}
+                                            </a>
+                                        {% else %}
+                                            {{ person_id }}
+                                        {% endif %}										
+                                        {% endfor %}
+                                        </li>
+                                    </ul>
+                                </aside>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                                        #}
+
                 </div>
-                 <div class="container py-lg-5 py-md-4 py-2">
+                <div class="container py-lg-5 py-md-4 py-2">
                     <div class="row">
                         {% set counter = 0 %}
                         {% if data['sub_research'] | length > 0%}
@@ -158,6 +210,58 @@
                             {%endif%}
                         {% endfor %}
                         {%endif%}
+                    </div>
+                </div>
+                <div class="container py-lg-5 py-md-4 py-2">
+                    <div class="row">
+                        {% set counter = 0 %}
+                        {% if data['news_articles'] | length > 0 %}
+                            <h2 style="padding-bottom: 30px;">News Updates</h2>
+                            {% for article_id in data['news_articles'] %}
+                                {% set article = indexed_article_df.loc[article_id] %}
+                                {% if counter < 3 %}
+                                    <div class="col-lg-4 col-md-6 item">
+                                        <div class="card">
+                                            <div class="card-header p-0 position-relative">
+                                                <a class="zoom d-flex" href="../../news/{{ article_id|lower }}.html">
+                                                    <img style="max-width: 380px; max-height: 230px;" class="card-img-bottom d-block"
+                                                        src="{{ article.cover_image }}" alt="article image">
+                                                </a>
+                                            </div>
+                                            <div class="card-body blog-details" style="max-height: 330px">
+                                                <div class='badge-tray'>
+                                                    {% if article.research_id != current_research_id %}
+                                                    {% set tag = article.research_id.replace('_', ' ').title() %}
+                                                    <span class="badge">{{tag}}</span>
+                                                    {%endif%}
+                                                </div>
+                                                <a class="zoom d-flex" href="/news/{{ article_id|lower }}.html">
+                                                    <h5 class="mb-3"
+                                                        style="height: 50px; overflow: hidden; display: flex; align-items: center; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                                        {{ article.title }}
+                                                    </h5>
+                                                </a>
+                                                <hr style="border-top: 1px dotted rgba(143, 143, 143);">
+                                                <div class="price-review mb-1 align-items-center" style="height: 80px;">
+                                                    <p style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                                        {% set found_para_key = false %}
+                                                        {% if article.content.keys()|length > 0 %}
+                                                        {% for content_key, content_value in article.content.items() %}
+                                                            {% if "para" in content_key and not found_para_key %}
+                                                                {{ content_value }}
+                                                                {% set found_para_key = true %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {%endif%}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% set counter = counter + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
