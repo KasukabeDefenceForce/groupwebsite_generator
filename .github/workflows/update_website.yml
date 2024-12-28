@@ -28,7 +28,7 @@ jobs:
       - name: Clone kerzendorf-group.github.io
         uses: actions/checkout@v4
         with:
-          repository: KasukabeDefenceForce/kerzendorf-group.github.io
+          repository: KasukabeDefenceForce/kerzendorf-lab.github.io
           path: kerzendorf-group.github.io
           token: ${{ secrets.TARDIS_BOT_TOKEN }}
 
